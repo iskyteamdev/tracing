@@ -8,17 +8,18 @@ import (
 	"github.com/go-chi/chi/v5/middleware"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/attribute"
-	"go.opentelemetry.io/otel/exporters/jaeger"
+	"go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracehttp"
 	"go.opentelemetry.io/otel/sdk/resource"
 	sdktrace "go.opentelemetry.io/otel/sdk/trace"
 	semconv "go.opentelemetry.io/otel/semconv/v1.21.0"
 	"go.opentelemetry.io/otel/trace"
 )
 
-// InitTracer configures the global Otel TracerProvider with a Jaeger exporter.
-func InitTracer(serviceName, jaegerURL string) func(context.Context) error {
-	exporter, err := jaeger.New(
-		jaeger.WithCollectorEndpoint(jaeger.WithEndpoint(jaegerURL)),
+// InitTracer configures the global Otel TracerProvider with an OTLP HTTP exporter.
+func InitTracer(serviceName, otlpEndpoint string) func(context.Context) error {
+	exporter, err := otlptracehttp.New(context.Background(),
+		otlptracehttp.WithEndpoint(otlpEndpoint),
+		otlptracehttp.WithInsecure(),
 	)
 	if err != nil {
 		panic(err)
