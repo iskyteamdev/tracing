@@ -15,8 +15,12 @@ import (
 	"go.opentelemetry.io/otel/trace"
 )
 
+var serviceName string
+
 // InitTracer configures the global Otel TracerProvider with an OTLP HTTP exporter.
-func InitTracer(serviceName, otlpEndpoint string) func(context.Context) error {
+func InitTracer(serviceNameParam, otlpEndpoint string) func(context.Context) error {
+	serviceName = serviceNameParam
+
 	exporter, err := otlptracehttp.New(context.Background(),
 		otlptracehttp.WithEndpoint(otlpEndpoint),
 		otlptracehttp.WithInsecure(),
@@ -48,7 +52,7 @@ func InitTracer(serviceName, otlpEndpoint string) func(context.Context) error {
 // StartSpan starts a new span with the given name using the global tracer.
 // Returns an updated context containing the span and the span itself.
 func StartSpan(ctx context.Context, name string) (context.Context, trace.Span) {
-	tracer := otel.Tracer("default")
+	tracer := otel.Tracer(serviceName)
 	return tracer.Start(ctx, name)
 }
 
