@@ -2,6 +2,7 @@ package tracing
 
 import (
 	"context"
+	"fmt"
 	"net/http"
 	"time"
 
@@ -53,6 +54,7 @@ func InitTracer(serviceNameParam, otlpEndpoint string) func(context.Context) err
 // Returns an updated context containing the span and the span itself.
 func StartSpan(ctx context.Context, name string) (context.Context, trace.Span) {
 	tracer := otel.Tracer(serviceName)
+	fmt.Println("StartSpan NAME: ", name)
 	return tracer.Start(ctx, name)
 }
 
